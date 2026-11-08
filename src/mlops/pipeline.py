@@ -1,4 +1,5 @@
 """Train -> evaluate -> conditional promote, on top of the MLflow Model Registry (aliases)."""
+
 import argparse
 import json
 
@@ -57,7 +58,9 @@ def train_candidate(
         )
         mlflow.log_metric("holdout_rmse", rmse(model, holdout()))
         sig = infer_signature(train[C.FEATURES], model.predict(train[C.FEATURES]))
-        info = mlflow.sklearn.log_model(model, name="model", signature=sig)
+        info = mlflow.sklearn.log_model(
+            model, name="model", signature=sig, serialization_format="cloudpickle"
+        )
         # Reference distribution for drift monitoring travels with the model version's run.
         train[C.FEATURES].sample(min(n, 2000), random_state=0).to_csv("reference.csv", index=False)
         mlflow.log_artifact("reference.csv")
