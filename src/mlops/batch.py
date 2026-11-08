@@ -1,4 +1,5 @@
 """Batch scoring CLI: python -m mlops.batch --input in.csv --output out.csv"""
+
 import argparse
 import time
 

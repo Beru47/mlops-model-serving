@@ -1,4 +1,5 @@
 """Seeded synthetic housing-style dataset (offline, deterministic, drift can be injected)."""
+
 import argparse
 
 import numpy as np
@@ -8,7 +9,7 @@ from .config import FEATURES, TARGET
 
 
 def make_data(n: int, seed: int, shift: float = 0.0) -> pd.DataFrame:
-    """Generate n rows. `shift` moves med_inc/population (covariate drift); the label rule is unchanged."""
+    """Generate n rows. `shift` moves med_inc/population (covariate drift)."""
     rng = np.random.default_rng(seed)
     df = pd.DataFrame(
         {

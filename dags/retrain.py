@@ -4,10 +4,11 @@ Tasks are thin wrappers over mlops.pipeline and idempotent: the run key is the A
 run_id, so a retried task reuses the already registered version and promotion is a no-op
 if the version is already Production.
 """
+
 import json
 import os
-import zlib
 import urllib.request
+import zlib
 from datetime import datetime
 
 from airflow.decorators import dag, task

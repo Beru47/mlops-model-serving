@@ -1,4 +1,5 @@
-"""Async load test: python -m mlops.loadtest --url http://localhost:8000 --n 3000 --concurrency 16"""
+"""Async load test (see README for usage)."""
+
 import argparse
 import asyncio
 import json
@@ -16,9 +17,7 @@ async def run(url: str, n: int, conc: int, shift: float, batch: int) -> dict:
     df = make_data(n, seed=99, shift=shift)[FEATURES]
     if batch > 1:
         path = "/predict/batch"
-        payloads = [
-            {"rows": df.iloc[i : i + batch].to_dict("records")} for i in range(0, n, batch)
-        ]
+        payloads = [{"rows": df.iloc[i : i + batch].to_dict("records")} for i in range(0, n, batch)]
     else:
         path, payloads = "/predict", df.to_dict("records")
     lat: list[float] = []

@@ -1,4 +1,5 @@
 """Drift math: PSI (effect size) + two-sample KS test (significance) per feature."""
+
 import numpy as np
 import pandas as pd
 from scipy.stats import ks_2samp
@@ -20,7 +21,7 @@ def psi(reference, current, bins: int = 10) -> float:
 
 
 def drift_report(reference: pd.DataFrame, current: pd.DataFrame) -> dict:
-    """Per-feature PSI / KS. A feature is drifted only if BOTH agree (large effect AND significant)."""
+    """Per-feature PSI / KS. Drifted only if PSI and KS both agree."""
     feats = {}
     for col in reference.columns:
         stat, p = ks_2samp(reference[col], current[col])

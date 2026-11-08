@@ -1,4 +1,5 @@
 """Settings read from the environment at call time (keeps tests and containers simple)."""
+
 import os
 
 FEATURES = ["med_inc", "house_age", "avg_rooms", "population", "latitude", "longitude"]

@@ -2,8 +2,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from mlops import pipeline, serve
-from mlops.data import make_data
 from mlops.config import FEATURES
+from mlops.data import make_data
 
 GOOD = make_data(1, 5)[FEATURES].iloc[0].to_dict()
 
