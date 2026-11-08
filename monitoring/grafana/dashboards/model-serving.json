@@ -1,0 +1,28 @@
+{
+  "uid": "model-serving",
+  "title": "Model serving and drift",
+  "schemaVersion": 39,
+  "refresh": "5s",
+  "time": {"from": "now-15m", "to": "now"},
+  "panels": [
+    {"id": 1, "type": "timeseries", "title": "Request rate", "gridPos": {"x": 0, "y": 0, "w": 8, "h": 8},
+     "targets": [{"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "sum by (endpoint) (rate(api_requests_total[1m]))", "legendFormat": "{{endpoint}}"}]},
+    {"id": 2, "type": "timeseries", "title": "Latency p50 / p95 (/predict)", "gridPos": {"x": 8, "y": 0, "w": 8, "h": 8},
+     "fieldConfig": {"defaults": {"unit": "s"}},
+     "targets": [
+       {"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "histogram_quantile(0.5, sum by (le) (rate(api_request_latency_seconds_bucket{endpoint=\"/predict\"}[1m])))", "legendFormat": "p50"},
+       {"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "histogram_quantile(0.95, sum by (le) (rate(api_request_latency_seconds_bucket{endpoint=\"/predict\"}[1m])))", "legendFormat": "p95"}]},
+    {"id": 3, "type": "stat", "title": "Served model version", "gridPos": {"x": 16, "y": 0, "w": 4, "h": 4},
+     "targets": [{"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "model_version"}]},
+    {"id": 4, "type": "stat", "title": "Drift detected", "gridPos": {"x": 20, "y": 0, "w": 4, "h": 4},
+     "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "no"}, "1": {"text": "YES"}}}],
+       "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}},
+     "targets": [{"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "drift_detected"}]},
+    {"id": 5, "type": "timeseries", "title": "PSI per feature (alert > 0.2)", "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+     "targets": [{"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "feature_drift_psi", "legendFormat": "{{feature}}"}]},
+    {"id": 6, "type": "timeseries", "title": "Prediction distribution (mean and p90)", "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+     "targets": [
+       {"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "rate(model_prediction_value_sum[1m]) / rate(model_prediction_value_count[1m])", "legendFormat": "mean"},
+       {"datasource": {"type": "prometheus", "uid": "prom"}, "expr": "histogram_quantile(0.9, sum by (le) (rate(model_prediction_value_bucket[1m])))", "legendFormat": "p90"}]}
+  ]
+}
