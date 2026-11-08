@@ -1,4 +1,5 @@
 """FastAPI service: loads the Production alias from the registry, exposes /predict and /metrics."""
+
 import asyncio
 import os
 import time
@@ -63,7 +64,7 @@ S = State()
 def load_production() -> None:
     mlflow.set_tracking_uri(C.tracking_uri())
     mv = MlflowClient().get_model_version_by_alias(C.model_name(), C.PRODUCTION)
-    S.model = mlflow.pyfunc.load_model(f"models:/{C.model_name()}@{C.PRODUCTION}")
+    S.model = mlflow.sklearn.load_model(f"models:/{C.model_name()}@{C.PRODUCTION}")
     path = mlflow.artifacts.download_artifacts(run_id=mv.run_id, artifact_path="reference.csv")
     S.reference = pd.read_csv(path)
     S.version = int(mv.version)
