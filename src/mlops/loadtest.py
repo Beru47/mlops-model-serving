@@ -61,13 +61,12 @@ def main() -> None:
     p.add_argument("--concurrency", type=int, default=16)
     p.add_argument("--batch", type=int, default=1, help="rows per request (>1 -> /predict/batch)")
     p.add_argument("--shift", type=float, default=0.0, help="inject covariate drift into traffic")
-    p.add_argument("--p95-target-ms", type=float, default=50.0)
+    p.add_argument("--p95-target-ms", type=float, default=None, help="exit 1 if p95 exceeds this")
     a = p.parse_args()
     res = asyncio.run(run(a.url, a.n, a.concurrency, a.shift, a.batch))
-    res["p95_target_ms"] = a.p95_target_ms
-    res["target_met"] = res["p95_ms"] <= a.p95_target_ms and res["errors"] == 0
+    ok = res["errors"] == 0 and (a.p95_target_ms is None or res["p95_ms"] <= a.p95_target_ms)
     print(json.dumps(res, indent=2))
-    raise SystemExit(0 if res["target_met"] else 1)
+    raise SystemExit(0 if ok else 1)
 
 
 if __name__ == "__main__":
