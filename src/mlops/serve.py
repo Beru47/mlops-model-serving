@@ -12,6 +12,7 @@ from fastapi import FastAPI, HTTPException, Request
 from mlflow.tracking import MlflowClient
 from prometheus_client import Counter, Gauge, Histogram, make_asgi_app
 from pydantic import BaseModel, Field
+from threadpoolctl import threadpool_limits
 
 from . import config as C
 from .drift import drift_report
@@ -62,6 +63,8 @@ S = State()
 
 
 def load_production() -> None:
+    # single-row inference: OpenMP thread fan-out costs far more than it saves
+    threadpool_limits(1)
     mlflow.set_tracking_uri(C.tracking_uri())
     mv = MlflowClient().get_model_version_by_alias(C.model_name(), C.PRODUCTION)
     S.model = mlflow.sklearn.load_model(f"models:/{C.model_name()}@{C.PRODUCTION}")
