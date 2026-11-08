@@ -9,3 +9,8 @@ reference.csv
 *.egg-info/
 data/
 .env
+lt*.json
+lt.done
+run_lt.sh
+*.log
+*.stackdump
